@@ -1,0 +1,110 @@
+-- drop table pagosp;
+create table pagosp (
+    id_pago serial primary key,
+    n_numcasa int,
+    monto float,
+    montopagado float,
+    estado int
+);
+
+-- drop table pagosp;
+create table pagosr (
+    id_pago serial primary key,
+    n_pagosp int,
+    monto float
+);
+
+
+-- Vista
+--drop view "vwpagosr"
+CREATE VIEW public."vwpagosr"
+ AS
+select pp.id_pago, pp.monto, COALESCE(sum(pr.monto),0) pagado from pagosp pp 
+left join pagosr pr on pp.id_pago=pr.n_pagosp
+group by pp.id_pago, pp.monto
+;
+
+
+
+-- Función
+
+CREATE OR REPLACE FUNCTION public.fntotalpagado(IN in_pagosp integer)
+    RETURNS double precision
+    LANGUAGE 'plpgsql'
+    VOLATILE
+    PARALLEL UNSAFE
+    COST 100
+    
+AS $BODY$
+declare
+    tmontopagado double precision;
+begin
+    select coalesce(sum(monto),0) into tmontopagado
+    from pagosr
+    where n_pagosp=in_pagosp;
+    return tmontopagado;
+end;
+$BODY$;
+
+
+
+
+-- Procedimiento
+
+-- DROP PROCEDURE IF EXISTS public."sp_procesarpago"(integer, double precision);
+
+CREATE OR REPLACE PROCEDURE public.sp_procesarpago(IN in_pagosp integer, IN imontopago double precision)
+    LANGUAGE 'plpgsql'
+    
+AS $BODY$
+declare
+    dmonto double precision;
+    xmonto double precision;
+begin
+    select coalesce(monto,0) into xmonto from pagosp where id_pago=in_pagosp;
+    select coalesce(montopagado,0) into dmonto from pagosp where id_pago=in_pagosp;
+    if dmonto+imontopago<=xmonto then
+        begin
+            -- insertar pago realizado
+            insert into pagosr (n_pagosp, monto)
+            values (in_pagosp, imontopago);
+            -- actualizar pago pendiente
+            update pagosp set montopagado = fntotalpagado(in_pagosp)
+            where id_pago=in_pagosp;
+        exception when others then
+            --raise notice 'error en el insert';
+            rollback;
+        end;
+        commit;
+    end if;
+    --raise notice 'normal';
+END;
+$BODY$;
+
+
+
+GRANT EXECUTE ON PROCEDURE public."sp_procesarPago"(integer, double precision) TO root;
+
+-- Función del Trigger
+CREATE OR REPLACE FUNCTION public.updestado()
+    RETURNS trigger
+    LANGUAGE 'plpgsql'
+    VOLATILE
+    COST 100
+AS $BODY$
+begin
+    if new.montopagado=new.monto and new.estado=0 then
+        new.estado=1;
+    end if;
+    return new;
+end;
+$BODY$;
+
+
+-- Trigger
+create trigger updestadopagado
+    before update of montopagado 
+    on pagosp
+    for each row execute procedure updestado();
+
+

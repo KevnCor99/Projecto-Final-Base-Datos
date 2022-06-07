@@ -1,0 +1,356 @@
+Projecto Final Base Datos
+
+ssh db6@lab403azms01.itesm.mx -p 54962
+HIO@oi#u785
+
+Creacion de base
+
+mysql> create user 'ProjectoFinal'@'localhost' identified by 'kevinpassword';
+mysql> create database projectofinal;
+mysql> grant all privileges on projectofinal.* to 'ProjectoFinal'@'localhost';
+mysql> flush privileges;
+
+
+
+Creacion de tablas
+
+create table inquilinos(NumCasa int primary key, Nombre varchar(20), Apellido_Paterno varchar(20), 
+Apellido_Materno varchar(20), NumTelefonico bigint, Edad int);
+
+create table mesa_directiva(ID_mesa_directiva int primary key, ID_mesa int, foreign key (ID_mesa) references inquilinos(NumCasa), ID_encargado_mesa int,
+Nombre varchar(20), Apellido_Paterno varchar(20), 
+Apellido_Materno varchar(20), NumTelefonico bigint, Edad int);
+
+create table encargado_area(ID_personal int primary key, ID_encargado int, Nombre varchar(20), Apellido_Paterno varchar(20), 
+Apellido_Materno varchar(20), NumTelefonico bigint, Edad int);
+
+create table area_recidencial(ID_area int, foreign key (ID_area) references encargado_area(ID_personal), Area varchar(20), Pago_Mensual int);
+
+create table pagos(ID_pagos int, foreign key (ID_pagos) references inquilinos(NumCasa), Pagado boolean, NoPagado boolean);
+
+create table presupuesto(ID_presupuesto int, foreign key (ID_presupuesto) references inquilinos(NumCasa), Mes int);
+
+create table cargos_mesa(ID_encargado int, foreign key (ID_encargado) references mesa_directiva(ID_mesa_directiva), Cargo varchar(20));
+
+create table pago_trabajador(ID_pago int, foreing key ID_pago references encargado_area(ID_personal), Pago_Mes int);
+
+create table inquilinosp (NumCasa int primary key, Nombre varchar(25), Apellido_Paterno varchar(25), Pagado boolean);
+
+create table encargados_areap (ID_personal int, Nombre varchar(25), Apellido_Paterno varchar(25), Area varchar(25));
+
+
+Insercion de datos
+
+
+'SELECT ID_personal, Nombre, Apellido_Paterno, Area from encargado_area
+                Left join area_recidencial on area_recidencial.ID_area = encargado_area.ID_encargado';
+
+
+insert into encargados_areap values
+
+(1,"Melanie","Leon","Jardinero"),
+(2,"Danielys","Aguilar","Jardinero"),
+(3,"Marcelina","Ramos","Jardinero"),
+(4,"Bruce","Calderon","Seguridad"),
+(5,"Carlos","Peseros","Seguridad");
+
+insert into inquilinos values
+
+(1,"Viviana","Valladolid","Torres",2221815596,33),
+(2,"Erika","Cruz","Maldonado",2222600605,40),
+(3,"Claudio","Lopez","Fernandez",8331573826,25),
+(4,"Jonathan","Miguel","Gago",9211231442,34),
+(5,"Arnold","Maque","Atoxsa",2211655750,27),
+(6,"Luzmila","Paz","Huere",2211660871,27),
+(7,"Jose","Condor","Suazo",221173619435,35),
+(8,"Daniel","Morales","Minaya",2211736812,41),
+(9,"Helbert","Angel","Cangre",2221175504,28),
+(10,"Joselyne","León","Alvarez",2221209236,29),
+(11,"Esperanza","Machaca","Jala",2221238932,30),
+(12,"Williams","Huachurunto","Campos",2221256106,28),
+(13,"Carolina","Gonzalez","Arevalo",2221276110,23),
+(14,"Celso","Ventura","Fernandez",2221278598,21),
+(15,"Sonia","Perez","Paucar",2221334977,29),
+(16,"Pedro","Medina","Vilchez",2221357503,27),
+(17,"Antonia","Menez","Chavez",2221400741,31),
+(18,"Carmen","Estrada","Gonzalez",2221546364,34),
+(19,"Erika","Ocas","Nena",2221612295,40),
+(20,"Katy","Cazo","Soto",2221757381,30),
+(21,"Eduardo","Sosa","Centurión",2941269902,21),
+(22,"Isabel","Leiva","Payano",2222061380,22),
+(23,"Palomino","Borja","Garcia",2222157701,27),
+(24,"Yovanna","Villegas","Peralta",2222558139,29),
+(25,"Yovana","Ortega","Vargas",2222600408,31),
+(26,"Thiago","Gonzalez","Cruz",2222602272,30),
+(27,"Teresa","Farfan","Vidaurre",2222622805,45),
+(28,"Edith","Campos","Yavis",2222931705,46),
+(29,"Selena","Ayllon","Marchan",2223059732,32),
+(30,"Karen","Angulo","Bautista",2223087552,35),
+(31,"Narcisa","Nuñez","Monteroza",2223190792,32),
+(32,"Juan","Ruiz","Huapaya",2223224193,36),
+(33,"Jimena","Burgos","Milla",2223464638,45),
+(34,"Yetty","Prado","Rodriguez",2223559513,41),
+(35,"Jose","Heredia","Montes",2223800225,31),
+(36,"Anthony","Juanez","Bravo",2223839559,39),
+(37,"Deyamira","Lucas","Alvarado",2223967795,24),
+(38,"Orlando","Ataramo","Ruiz",2224147547,26),
+(39,"Leyla","Hernandez","Estrado",2224377107,29),
+(40,"Jose","Aranda","Urbano",2224737476,31),
+(41,"Lorenzo","Lozano","Salazar",2225019752,40),
+(42,"Carmen","Lopez","Pinsdo",2225204868,43),
+(43,"Mercedes","Almendariz","Luna",2225209132,32),
+(44,"Vidal","Veramendi","Zenaida",2225351412,33),
+(45,"Zoila","Tapia","Lescano",2226762222,38),
+(46,"Shaina","Sacsara","Nieva",2227094594,50),
+(47,"Jaime","Palacin","Lope",2227234030,34),
+(48,"Guadalupe","Sanchez","Rodriguez",2227483208,46),
+(49,"Sonia","Gallego","Acuña",2227617889,38),
+(50,"Carola","Uniza","Espinoza",2227650919,41),
+(51,"Wendy","Rojas","Hurtado",2228123626,34),
+(52,"Juan","Rodriguez","Carnasca",2228612987,45),
+(53,"Luordes","Urbano","Ortega",2229263044,39),
+(54,"Yelismar","Huerta","Garcia",2382359226,37),
+(55,"Eugenia","Prado","Moreno",2411186690,41),
+(56,"Alberto","Rodriguez","Golgochea",2461046013,37),
+(57,"Caroline","Chavez","Arias",2721398867,31),
+(58,"Esthefany","Nieva","Mallqui",5511469333,41),
+(59,"Maria", "Vasquez","Diaz",5515024852,35),
+(60,"Geraldine","Lozano","Vega",5522148868,37);
+
+
+insert into inquilinosp values
+
+(1,"Viviana","Valladolid",1),
+(2,"Erika","Cruz",1),
+(3,"Claudio","Lopez",1),
+(4,"Jonathan","Miguel",1),
+(5,"Arnold","Maque",1),
+(6,"Luzmila","Paz",1),
+(7,"Jose","Condor",1),
+(8,"Daniel","Morales",1),
+(9,"Helbert","Angel",1),
+(10,"Joselyne","León",1),
+(11,"Esperanza","Machaca",1),
+(12,"Williams","Huachurunto",1),
+(13,"Carolina","Gonzalez",1),
+(14,"Celso","Ventura",1),
+(15,"Sonia","Perez",1),
+(16,"Pedro","Medina",1),
+(17,"Antonia","Menez",1),
+(18,"Carmen","Estrada",1),
+(19,"Erika","Ocas",1),
+(20,"Katy","Cazo",1),
+(21,"Eduardo","Sosa",1),
+(22,"Isabel","Leiva",1),
+(23,"Palomino","Borja",1),
+(24,"Yovanna","Villegas",1),
+(25,"Yovana","Ortega",1),
+(26,"Thiago","Gonzalez",1),
+(27,"Teresa","Farfan",1),
+(28,"Edith","Campos",1),
+(29,"Selena","Ayllon",1),
+(30,"Karen","Angulo",1),
+(31,"Narcisa","Nuñez",1),
+(32,"Juan","Ruiz",1),
+(33,"Jimena","Burgos",1),
+(34,"Yetty","Prado",1),
+(35,"Jose","Heredia",1),
+(36,"Anthony","Juanez",1),
+(37,"Deyamira","Lucas",1),
+(38,"Orlando","Ataramo",1),
+(39,"Leyla","Hernandez",1),
+(40,"Jose","Aranda",1),
+(41,"Lorenzo","Lozano",1),
+(42,"Carmen","Lopez",1),
+(43,"Mercedes","Almendariz",1),
+(44,"Vidal","Veramendi",1),
+(45,"Zoila","Tapia",1),
+(46,"Shaina","Sacsara",1),
+(47,"Jaime","Palacin",1),
+(48,"Guadalupe","Sanchez",1),
+(49,"Sonia","Gallego",1),
+(50,"Carola","Uniza",1),
+(51,"Wendy","Rojas",1),
+(52,"Juan","Rodriguez",1),
+(53,"Luordes","Urbano",1),
+(54,"Yelismar","Huerta",1),
+(55,"Eugenia","Prado",1),
+(56,"Alberto","Rodriguez",1),
+(57,"Caroline","Chavez",1),
+(58,"Esthefany","Nieva",1),
+(59,"Maria", "Vasquez",1),
+(60,"Geraldine","Lozano",1);
+
+insert into inquilinosp values
+
+(1,"Viviana","Valladolid",1),
+(3,"Claudio","Lopez",1),
+(4,"Jonathan","Miguel",1);
+
+
+
+
+insert into mesa_directiva values
+
+(1,18,1,"Carmen","Estrada","Gonzalez",2221546364,34),
+(2,32,2,"Juan","Ruiz","Huapaya",2223224193,36),
+(3,51,2,"Wendy","Rojas","Hurtado",2228123626,34),
+(4,36,3,"Anthony","Juanez","Bravo",2223839559,39),
+(5,54,3,"Yelismar","Huerta","Garcia",2382359226,37);
+
+
+insert into encargado_area values
+
+(1,1,"Melanie","Leon","Ramos",5532840271,30),
+(2,1,"Danielys","Aguilar","Perez",5595965561,31),
+(3,1,"Marcelina","Ramos","Duran",5628485070,34),
+(4,2,"Bruce","Calderon","Arce",5628485070,40),
+(5,2,"Carlos","Peseros","Gamarra",5548578011,35);
+
+insert into area_recidencial values
+
+(1,"Jardineria",4000), 
+(2,"Seguridad",12000);
+
+
+insert into pagos values
+
+(1,1,0),
+(2,1,0),
+(3,1,0),
+(4,1,0),
+(5,1,0),
+(6,1,0),
+(7,1,0),
+(8,1,0),
+(9,1,0),
+(10,1,0),
+(11,1,0),
+(12,1,0),
+(13,1,0),
+(14,1,0),
+(15,1,0),
+(16,1,0),
+(17,1,0),
+(18,1,0),
+(19,1,0),
+(20,1,0),
+(21,1,0),
+(22,1,0),
+(23,1,0),
+(24,1,0),
+(25,1,0),
+(26,1,0),
+(27,1,0),
+(28,1,0),
+(29,1,0),
+(30,1,0),
+(31,1,0),
+(32,1,0),
+(33,1,0),
+(34,1,0),
+(35,1,0),
+(36,1,0),
+(37,1,0),
+(38,1,0),
+(39,1,0),
+(40,1,0),
+(41,1,0),
+(42,1,0),
+(43,1,0),
+(44,1,0),
+(45,1,0),
+(46,1,0),
+(47,1,0),
+(48,1,0),
+(49,1,0),
+(50,1,0),
+(51,1,0),
+(52,1,0),
+(53,1,0),
+(54,1,0),
+(55,1,0),
+(56,1,0),
+(57,1,0),
+(58,1,0),
+(59,1,0),
+(60,1,0);
+
+
+
+insert into presupuesto values
+
+(1,550),
+(2,550),
+(3,550),
+(4,550),
+(5,550),
+(6,550),
+(7,550),
+(8,550),
+(9,550),
+(10,550),
+(11,550),
+(12,550),
+(13,550),
+(14,550),
+(15,550),
+(16,550),
+(17,550),
+(18,550),
+(19,550),
+(20,550),
+(21,550),
+(22,550),
+(23,550),
+(24,550),
+(25,550),
+(26,550),
+(27,550),
+(28,550),
+(29,550),
+(30,550),
+(31,550),
+(32,550),
+(33,550),
+(34,550),
+(35,550),
+(36,550),
+(37,550),
+(38,550),
+(39,550),
+(40,550),
+(41,550),
+(42,550),
+(43,550),
+(44,550),
+(45,550),
+(46,550),
+(47,550),
+(48,550),
+(49,550),
+(50,550),
+(51,550),
+(52,550),
+(53,550),
+(54,550),
+(55,550),
+(56,550),
+(57,550),
+(58,550),
+(59,550),
+(60,550);
+
+
+insert into cargos_mesa values
+
+(1,"Presidente"),
+(2,"Secretario"),
+(3,"Tesorero");
+
+
+insert into pago_trabajador values
+
+(1,4000),
+(1,12000);
+
